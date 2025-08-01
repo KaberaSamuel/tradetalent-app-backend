@@ -1,6 +1,12 @@
-from rest_framework import generics
 from .serializers import UserSerializer
-from django.contrib.auth.models import User
+from django.contrib.auth import authenticate
+from api.models import User
+
+from rest_framework import generics
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework.authtoken.models import Token
 
 
 class UserListCreate(generics.ListCreateAPIView):
@@ -10,3 +16,4 @@ class UserListCreate(generics.ListCreateAPIView):
 class UserDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
+
