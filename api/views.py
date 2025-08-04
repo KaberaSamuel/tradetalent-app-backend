@@ -40,8 +40,7 @@ class UserLoginView(APIView):
             )
 
         # Check the password
-        if user.check_password(password):
-        
+        if user.check_password(password):        
             serializer = UserSerializer(user)
             return Response(
                 {"user": serializer.data}, status=status.HTTP_200_OK
@@ -57,8 +56,9 @@ class LogoutView(APIView):
 
     #  Invalidating the token after logout
      def post(self, request):
-          try:
-               refresh_token = request.data["refresh_token"]
+          try:  
+               print("invalidating token")
+               refresh_token = request.data["refresh"]
                token = RefreshToken(refresh_token)
                token.blacklist()
                return Response(status=status.HTTP_205_RESET_CONTENT)
@@ -69,6 +69,5 @@ class Home(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        content = {"message": "Hello, World!"}
         serializer = UserSerializer(request.user)
         return Response({"user": serializer.data})
