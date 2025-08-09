@@ -1,5 +1,5 @@
 from .serializers import UserSerializer
-from api.models import User
+from users.models import User
 
 from django.contrib.auth import authenticate
 from rest_framework.permissions import IsAuthenticated, AllowAny
@@ -15,11 +15,6 @@ from rest_framework import status
 class UserListCreate(generics.ListCreateAPIView):
     permission_classes = [AllowAny]
 
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
-
-
-class UserDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
@@ -52,8 +47,6 @@ class UserLoginView(APIView):
 
 
 class LogoutView(APIView):
-     permission_classes = [IsAuthenticated]
-
     #  Invalidating the token after logout
      def post(self, request):
           try:  
@@ -66,8 +59,6 @@ class LogoutView(APIView):
                return Response(status=status.HTTP_400_BAD_REQUEST)
 
 class Home(APIView):
-    permission_classes = [IsAuthenticated]
-
     def get(self, request):
         serializer = UserSerializer(request.user)
         return Response({"user": serializer.data})
