@@ -158,7 +158,7 @@ SIMPLE_JWT = {
 }
 
 # directory where file uploads are stored
-MEDIA_ROOT = os.path.join(os.path.dirname(BASE_DIR), 'mediafiles')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'mediafiles')
 
 # URL used to access the media
 MEDIA_URL = '/media/'

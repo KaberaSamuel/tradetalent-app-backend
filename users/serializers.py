@@ -35,7 +35,17 @@ class UserUpdateSerializer(serializers.ModelSerializer):
         instance.about = validated_data.get('about', instance.about)
         instance.services_offered = validated_data.get('services_offered', instance.services_offered)
         instance.services_needed = validated_data.get('services_needed', instance.services_needed)
+
+         # Handle profile image update
+        if 'profile_image' in validated_data:
+            new_image = validated_data.get('profile_image')
+            if new_image and instance.profile_image:
+                instance.profile_image.delete(save=False)
+            instance.profile_image = new_image
         
         instance.save()
         return instance
+    
+
+
     
