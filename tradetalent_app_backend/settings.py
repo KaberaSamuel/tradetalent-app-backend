@@ -13,7 +13,6 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 from pathlib import Path
 from datetime import timedelta
 
-import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -34,6 +33,8 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'cloudinary_storage',
+    'cloudinary',
     'rest_framework_simplejwt.token_blacklist',
    'rest_framework_simplejwt',
     'corsheaders',
@@ -157,8 +158,13 @@ SIMPLE_JWT = {
      'AUTH_HEADER_TYPES': ('Bearer',),
 }
 
-# directory where file uploads are stored
-MEDIA_ROOT = os.path.join(BASE_DIR, 'mediafiles')
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': '',
+    'API_KEY': '',
+    'API_SECRET': '',
+}
 
-# URL used to access the media
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+
+# URL used to access the media files
 MEDIA_URL = '/media/'

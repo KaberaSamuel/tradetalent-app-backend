@@ -30,6 +30,7 @@ class HomeUserSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data): 
         instance.first_name = validated_data.get('first_name', instance.first_name)
         instance.last_name = validated_data.get('last_name', instance.last_name)
+        instance.email = validated_data.get('email', instance.email)
         instance.location = validated_data.get('location', instance.location)
         instance.about = validated_data.get('about', instance.about)
         instance.services_offered = validated_data.get('services_offered', instance.services_offered)
