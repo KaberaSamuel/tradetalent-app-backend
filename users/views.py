@@ -1,4 +1,4 @@
-from .serializers import UserSerializer, UserUpdateSerializer
+from .serializers import AuthUserSerializer, HomeUserSerializer
 from users.models import User
 
 from django.contrib.auth import authenticate
@@ -17,7 +17,7 @@ class UserListCreate(generics.ListCreateAPIView):
     permission_classes = [AllowAny]
 
     queryset = User.objects.all()
-    serializer_class = UserSerializer
+    serializer_class = AuthUserSerializer
 
 
 class UserLoginView(APIView):
@@ -37,7 +37,7 @@ class UserLoginView(APIView):
 
         # Check the password
         if user.check_password(password):        
-            serializer = UserSerializer(user)
+            serializer = AuthUserSerializer(user)
             return Response(
                 {"user": serializer.data}, status=status.HTTP_200_OK
             )
@@ -62,11 +62,11 @@ class Home(APIView):
     parser_classes = (MultiPartParser, FormParser)
 
     def get(self, request):
-        serializer = UserSerializer(request.user)
+        serializer = HomeUserSerializer(request.user)
         return Response({"user": serializer.data})
     
     def post(self, request):
-        serializer = UserUpdateSerializer(data=request.data, instance=request.user)
+        serializer = HomeUserSerializer(data=request.data, instance=request.user)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
