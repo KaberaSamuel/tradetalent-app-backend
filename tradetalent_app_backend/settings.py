@@ -10,12 +10,27 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
+
+import os
+import cloudinary
 from pathlib import Path
 from datetime import timedelta
+import environ
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+env = environ.Env()
+env_path = os.path.join(BASE_DIR, '.env')
+environ.Env.read_env(env_path)
+
+
+cloudinary.config(
+    cloud_name= env("CLOUD_NAME"),
+    api_key= env("API_KEY"),
+    api_secret= env("API_SECRET")
+)
 
 
 # Quick-start development settings - unsuitable for production
@@ -25,10 +40,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-_l+az7stztk8s0oe^(vv-0784heu$+81p6)%)py4&)xkor5@j#'
 
 # SECURITY WARNING: don't run with debug turned on in production!
+
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
 
 # Application definition
 
@@ -158,13 +173,9 @@ SIMPLE_JWT = {
      'AUTH_HEADER_TYPES': ('Bearer',),
 }
 
-CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': '',
-    'API_KEY': '',
-    'API_SECRET': '',
-}
 
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 # URL used to access the media files
 MEDIA_URL = '/media/'
+
