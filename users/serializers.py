@@ -2,14 +2,20 @@ from rest_framework import serializers
 from users.models import User
 
 class AuthUserSerializer(serializers.ModelSerializer):
-    """Serializer for user registration"""
+    profile_image = serializers.SerializerMethodField()
+    
     class Meta:
         model = User 
-        fields = [ "first_name", "last_name", "email", "password"] 
+        fields = '__all__' 
         extra_kwargs = {
             'password': {'write_only': True} 
         }
 
+    # get full url for the profile image
+    def get_profile_image(self, obj):
+        if obj.profile_image:
+            return str(obj.profile_image.url)
+        return None
     
     def create(self, validated_data):
         user = User.objects.create_user(
