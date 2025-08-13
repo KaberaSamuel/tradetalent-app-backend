@@ -5,13 +5,15 @@ from cloudinary.models import CloudinaryField
 
 class User(AbstractUser):
     username = None
+    name=models.CharField(max_length=100, default="")
     email = models.EmailField(unique=True)
-    location = models.CharField(max_length=20)
-    about = models.TextField()
-    services_offered = models.CharField(max_length=200)
-    services_needed = models.CharField(max_length=200)
+    location = models.CharField(max_length=100, default="")
+    about = models.TextField(default="")
+    services_offered = models.CharField(max_length=200, default="")
+    services_needed = models.CharField(max_length=200, default="")
     profile_image = CloudinaryField('image', blank=True, null=True) 
+    
     USERNAME_FIELD = "email"
-    REQUIRED_FIELDS = ["first_name", "last_name"]
+    REQUIRED_FIELDS = []
 
     objects = CustomUserManager()
