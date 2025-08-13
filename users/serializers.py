@@ -2,20 +2,12 @@ from rest_framework import serializers
 from users.models import User
 
 class AuthUserSerializer(serializers.ModelSerializer):
-    profile_image = serializers.SerializerMethodField()
-    
     class Meta:
         model = User 
-        fields = '__all__' 
+        fields = ['email', 'password', 'first_name', 'last_name']
         extra_kwargs = {
             'password': {'write_only': True} 
         }
-
-    # get full url for the profile image
-    def get_profile_image(self, obj):
-        if obj.profile_image:
-            return str(obj.profile_image.url)
-        return None
     
     def create(self, validated_data):
         user = User.objects.create_user(
@@ -29,17 +21,24 @@ class AuthUserSerializer(serializers.ModelSerializer):
 
 class HomeUserSerializer(serializers.ModelSerializer):
     profile_image = serializers.SerializerMethodField()
+    name_initials = serializers.SerializerMethodField()
     
     class Meta:
         model = User 
         fields = ['first_name', 'last_name', 'location', 'about', 
-                 'services_offered', 'services_needed', 'profile_image']
+                 'services_offered', 'services_needed', 'profile_image', 'name_initials']
     
     # get full url for the profile image
     def get_profile_image(self, obj):
         if obj.profile_image:
             return str(obj.profile_image.url)
         return None
+
+    def get_name_initials(self, obj):
+        if obj.first_name and obj.last_name:
+            return (obj.first_name[0] + obj.last_name[0]).upper()
+        return ""
+
     
     def update(self, instance, validated_data): 
         instance.first_name = validated_data.get('first_name', instance.first_name)

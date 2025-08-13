@@ -13,11 +13,16 @@ from rest_framework import status
 from rest_framework.parsers import MultiPartParser, FormParser
 
 
-class UserListCreate(generics.ListCreateAPIView):
+class Register(APIView):
     permission_classes = [AllowAny]
-
-    queryset = User.objects.all()
-    serializer_class = AuthUserSerializer
+    
+    def post(self,request):
+        serializer = AuthUserSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class UserLoginView(APIView):
@@ -27,7 +32,6 @@ class UserLoginView(APIView):
         email = request.data.get("email")
         password = request.data.get("password")
 
-        # Get user by email
         try:
             user = User.objects.get(email=email)
         except User.DoesNotExist:
@@ -35,17 +39,22 @@ class UserLoginView(APIView):
                 {"error": "Invalid Email"}, status=status.HTTP_400_BAD_REQUEST
             )
 
-        # Check the password
-        if user.check_password(password):        
-            serializer = AuthUserSerializer(user)
-            return Response(
-                {"user": serializer.data}, status=status.HTTP_200_OK
-            )
+        if user.check_password(password):
+            # Generate JWT tokens
+            refresh = RefreshToken.for_user(user)
+            access_token = refresh.access_token
+
+            # get user data for homepage
+            serializer = HomeUserSerializer(user)  
+            return Response({
+                "user": serializer.data,
+                "tokens": {"access": str(access_token),
+                "refresh": str(refresh)},
+            }, status=status.HTTP_200_OK)
         else:
             return Response(
                 {"error": "Invalid Password"}, status=status.HTTP_400_BAD_REQUEST
             )
-
 
 class LogoutView(APIView):
     #  Invalidating the token after logout
