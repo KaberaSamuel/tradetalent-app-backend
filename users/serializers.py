@@ -17,9 +17,7 @@ class AuthUserSerializer(serializers.ModelSerializer):
         )
         return user
 
-
 class HomeUserSerializer(serializers.ModelSerializer):
-    profile_image = serializers.SerializerMethodField()
     name_initials = serializers.SerializerMethodField()
     first_name = serializers.SerializerMethodField()
     
@@ -27,12 +25,6 @@ class HomeUserSerializer(serializers.ModelSerializer):
         model = User 
         fields = ['email', 'name', 'location', 'about', 
                  'services_offered', 'services_needed', 'profile_image', 'name_initials', 'first_name']
-    
-
-    def get_profile_image(self, obj):
-        if obj.profile_image:
-            return str(obj.profile_image.url)
-        return None
 
     def get_name_initials(self, obj):
         name_parts = obj.name.split(" ")
@@ -47,6 +39,14 @@ class HomeUserSerializer(serializers.ModelSerializer):
     def get_first_name(self, obj):
         return obj.name.split(" ")[0]
 
+    def to_representation(self, instance):
+        """Custom method to format profile_image to return complete image url """
+        data = super().to_representation(instance)
+        if instance.profile_image:
+            data['profile_image'] = str(instance.profile_image.url)
+        else:
+            data['profile_image'] = None
+        return data
     
     def update(self, instance, validated_data):  
         instance.name = validated_data.get('name', instance.name)
@@ -55,14 +55,7 @@ class HomeUserSerializer(serializers.ModelSerializer):
         instance.about = validated_data.get('about', instance.about)
         instance.services_offered = validated_data.get('services_offered', instance.services_offered)
         instance.services_needed = validated_data.get('services_needed', instance.services_needed)
-        
-        # Handle profile image upload
-        if 'profile_image' in validated_data:
-            instance.profile_image = validated_data.get('profile_image')
-            
+        instance.profile_image = validated_data.get('profile_image', instance.profile_image)
+
         instance.save()
         return instance
-    
-
-
-    

@@ -43,6 +43,7 @@ class UserLoginView(APIView):
             # Generate JWT tokens
             refresh = RefreshToken.for_user(user)
             access_token = refresh.access_token
+            print(user)
 
             # get user data for homepage
             serializer = HomeUserSerializer(user)  
@@ -56,6 +57,7 @@ class UserLoginView(APIView):
                 {"error": "Invalid Password"}, status=status.HTTP_400_BAD_REQUEST
             )
 
+
 class LogoutView(APIView):
     #  Invalidating the token after logout
      def post(self, request):
@@ -67,6 +69,7 @@ class LogoutView(APIView):
           except Exception as e:
                return Response(status=status.HTTP_400_BAD_REQUEST)
 
+
 class Home(APIView):
     parser_classes = (MultiPartParser, FormParser)
 
@@ -75,9 +78,10 @@ class Home(APIView):
         return Response({"user": serializer.data})
     
     def post(self, request):
-        serializer = HomeUserSerializer(data=request.data, instance=request.user)
+        serializer = HomeUserSerializer(instance=request.user, data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response({"user": serializer.data}, status=status.HTTP_200_OK)
         else:
+            print(f"Serializer errors: {serializer.errors}")
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
