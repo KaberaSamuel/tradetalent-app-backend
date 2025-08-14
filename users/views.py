@@ -43,7 +43,6 @@ class UserLoginView(APIView):
             # Generate JWT tokens
             refresh = RefreshToken.for_user(user)
             access_token = refresh.access_token
-            print(user)
 
             # get user data for homepage
             serializer = HomeUserSerializer(user)  
@@ -83,5 +82,4 @@ class Home(APIView):
             serializer.save()
             return Response({"user": serializer.data}, status=status.HTTP_200_OK)
         else:
-            print(f"Serializer errors: {serializer.errors}")
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

@@ -48,14 +48,10 @@ class HomeUserSerializer(serializers.ModelSerializer):
             data['profile_image'] = None
         return data
     
-    def update(self, instance, validated_data):  
-        instance.name = validated_data.get('name', instance.name)
-        instance.email = validated_data.get('email', instance.email)
-        instance.location = validated_data.get('location', instance.location)
-        instance.about = validated_data.get('about', instance.about)
-        instance.services_offered = validated_data.get('services_offered', instance.services_offered)
-        instance.services_needed = validated_data.get('services_needed', instance.services_needed)
-        instance.profile_image = validated_data.get('profile_image', instance.profile_image)
+    def update(self, instance, validated_data):
+        """update only changed fields with valid data"""
+        for key, value in validated_data.items():
+            setattr(instance, key, value)
 
         instance.save()
         return instance
