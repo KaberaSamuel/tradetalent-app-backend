@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from users.models import User
+import cloudinary
 
 class AuthUserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -50,6 +51,11 @@ class HomeUserSerializer(serializers.ModelSerializer):
     
     def update(self, instance, validated_data):
         """update only changed fields with valid data"""
+
+        # delete original image adding a new one
+        if "profile_image" in validated_data: 
+            cloudinary.uploader.destroy(instance.profile_image.public_id, invalidate=True)
+
         for key, value in validated_data.items():
             setattr(instance, key, value)
 
