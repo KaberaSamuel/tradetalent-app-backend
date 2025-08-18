@@ -1,0 +1,8 @@
+version: "2"
+tunnels:
+  react:
+    proto: http
+    addr: 5173
+  django:
+    proto: http
+    addr: 8000

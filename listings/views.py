@@ -6,10 +6,8 @@ class ListingListCreate(generics.ListCreateAPIView):
     queryset = Listing.objects.all()
     serializer_class = ListingSerializer
 
-    def create(self, request, *args, **kwargs):
-        # Adding user who is posting the listing
-        request.data['user'] = request.user.id
-        return super().create(request, *args, **kwargs)
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
     
 
 class ListingDetail(generics.RetrieveUpdateDestroyAPIView):

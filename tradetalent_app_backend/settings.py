@@ -37,13 +37,13 @@ cloudinary.config(
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-_l+az7stztk8s0oe^(vv-0784heu$+81p6)%)py4&)xkor5@j#'
+SECRET_KEY = env("DJANGO_SECRET")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 INSTALLED_APPS = [
     'cloudinary_storage',
@@ -148,6 +148,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Cors configurations
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
+    "http://192.168.1.68:5173",
+    "https://my-react-frontend.loca.lt"
+    
 ]
 
 CORS_ALLOW_CREDENTIALS = True
