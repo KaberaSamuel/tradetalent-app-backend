@@ -15,6 +15,7 @@ filelock = "*"
 pillow = "*"
 pyjwt = "*"
 requests = "*"
+pendulum = "*"
 
 [dev-packages]
 

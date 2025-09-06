@@ -17,6 +17,7 @@ class AuthUserSerializer(serializers.ModelSerializer):
             name=validated_data['name'],
         )
         return user
+    
 
 class HomeUserSerializer(serializers.ModelSerializer):
     name_initials = serializers.SerializerMethodField()
