@@ -11,7 +11,7 @@ class ListingSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Listing
-        fields = ['id', 'user', 'title', 'type', 'work_mode', 'location', 'description', 'skills', 'date', 'delta_time']
+        fields = ['id', 'user', 'title', 'type', 'slug', 'work_mode', 'location', 'description', 'skills', 'date', 'delta_time']
 
     def get_date(self, obj): 
         date = pendulum.instance(obj.created_at)

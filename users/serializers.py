@@ -54,7 +54,7 @@ class HomeUserSerializer(serializers.ModelSerializer):
         """update only changed fields with valid data"""
 
         # delete original image adding a new one
-        if "profile_image" in validated_data: 
+        if "profile_image" in validated_data and instance.profile_image: 
             cloudinary.uploader.destroy(instance.profile_image.public_id, invalidate=True)
 
         for key, value in validated_data.items():
