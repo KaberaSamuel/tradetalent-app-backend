@@ -26,3 +26,4 @@ class UserListings(generics.ListAPIView):
 class ListingDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Listing.objects.all()
     serializer_class = ListingSerializer
+    lookup_field = "slug"

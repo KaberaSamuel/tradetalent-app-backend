@@ -41,9 +41,9 @@ SECRET_KEY = env("DJANGO_SECRET")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 
-DEBUG = True
+DEBUG =False if env("DEBUG") == "false" else True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['tradetalent-app-backend.onrender.com', '127.0.0.1']
 
 INSTALLED_APPS = [
     'cloudinary_storage',
@@ -148,9 +148,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Cors configurations
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
-    "http://192.168.1.68:5173",
-    "https://my-react-frontend.loca.lt"
-    
+    env("FRONTEND_API"),
+    env("BACKEND_API")
 ]
 
 CORS_ALLOW_CREDENTIALS = True
