@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from users.models import User
+from listings.models import Listing
 import cloudinary
 
 class AuthUserSerializer(serializers.ModelSerializer):
@@ -22,11 +23,15 @@ class AuthUserSerializer(serializers.ModelSerializer):
 class HomeUserSerializer(serializers.ModelSerializer):
     name_initials = serializers.SerializerMethodField()
     first_name = serializers.SerializerMethodField()
+    my_listings_count = serializers.SerializerMethodField()
     
     class Meta:
         model = User 
         fields = ['email', 'name', 'location', 'about', 
-                 'services_offered', 'services_needed', 'profile_image', 'name_initials', 'first_name']
+                 'services_offered', 'services_needed', 'profile_image', 'name_initials', 'first_name', "my_listings_count"]
+        
+    def get_my_listings_count(self, obj):
+        return Listing.objects.filter(user=obj).count()
 
     def get_name_initials(self, obj):
         name_parts = obj.name.split(" ")
