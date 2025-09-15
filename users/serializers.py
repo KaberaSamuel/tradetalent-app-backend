@@ -27,7 +27,7 @@ class HomeUserSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = User 
-        fields = ['email', 'name', 'location', 'about', 
+        fields = ['email', 'name', 'slug', 'location', 'about', 
                  'services_offered', 'services_needed', 'profile_image', 'name_initials', 'first_name', "my_listings_count"]
         
     def get_my_listings_count(self, obj):
