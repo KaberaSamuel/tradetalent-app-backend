@@ -46,6 +46,7 @@ DEBUG =False if env("DEBUG") == "false" else True
 ALLOWED_HOSTS = ['tradetalent-app-backend.onrender.com', '127.0.0.1']
 
 INSTALLED_APPS = [
+    'django_filters',
     'cloudinary_storage',
     'cloudinary',
     'rest_framework_simplejwt.token_blacklist',

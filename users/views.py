@@ -5,14 +5,15 @@ from django.contrib.auth import authenticate
 from rest_framework.permissions import  AllowAny
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from rest_framework.generics import RetrieveUpdateDestroyAPIView
+from rest_framework.generics import RetrieveUpdateDestroyAPIView, GenericAPIView
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import status
+from rest_framework import status, filters
 from rest_framework.parsers import MultiPartParser, FormParser
 
 
-class Register(APIView):
+class RegisterView(APIView):
+    authentication_classes = [] 
     permission_classes = [AllowAny]
     
     def post(self,request):
@@ -23,7 +24,8 @@ class Register(APIView):
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-class UserLoginView(APIView):
+
+class LoginView(APIView):
     permission_classes = [AllowAny]
 
     def post(self, request):
@@ -67,7 +69,7 @@ class LogoutView(APIView):
                return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
-class Home(APIView):
+class HomeView(APIView):
     parser_classes = (MultiPartParser, FormParser)
 
     def get(self, request):
@@ -82,7 +84,27 @@ class Home(APIView):
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-class UserDetail(RetrieveUpdateDestroyAPIView):
+
+class UserDetailView(RetrieveUpdateDestroyAPIView):
     queryset = User.objects.all()
     serializer_class = HomeUserSerializer
     lookup_field = "slug"
+
+
+class SearchView(GenericAPIView):
+    queryset = User.objects.all()
+    serializer_class = HomeUserSerializer
+    filter_backends = [filters.SearchFilter]
+    search_fields = [
+       'name',
+       'about',
+       'services_offered',
+       'services_needed'
+   ]
+    permission_classes = [AllowAny]
+
+    def get(self, request, *args, **kwargs):
+       queryset = self.filter_queryset(self.get_queryset())
+       serializer = self.get_serializer(queryset, many=True)
+       return Response(serializer.data, status=status.HTTP_200_OK)
+    

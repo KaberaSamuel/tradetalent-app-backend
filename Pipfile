@@ -17,6 +17,7 @@ pyjwt = "*"
 requests = "*"
 pendulum = "*"
 django-autoslug = "*"
+django-filter = "*"
 
 [dev-packages]
 
