@@ -21,16 +21,10 @@ import environ
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# Env config
 env = environ.Env()
 env_path = os.path.join(BASE_DIR, '.env')
 environ.Env.read_env(env_path)
-
-
-cloudinary.config(
-    cloud_name= env("CLOUD_NAME"),
-    api_key= env("API_KEY"),
-    api_secret= env("API_SECRET")
-)
 
 
 # Quick-start development settings - unsuitable for production
@@ -43,18 +37,22 @@ SECRET_KEY = env("DJANGO_SECRET")
 
 DEBUG =False if env("DEBUG") == "false" else True
 
-ALLOWED_HOSTS = ['tradetalent-app-backend.onrender.com', '127.0.0.1']
+ALLOWED_HOSTS = [env("BACKEND_HOST")]
 
 INSTALLED_APPS = [
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
     'django_filters',
     'cloudinary_storage',
     'cloudinary',
-    'rest_framework_simplejwt.token_blacklist',
-   'rest_framework_simplejwt',
     'corsheaders',
-    'rest_framework',
     'users',
     'listings',
+    'rest_framework_simplejwt.token_blacklist',
+   'rest_framework_simplejwt',
+    'rest_framework',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -68,9 +66,9 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'allauth.account.middleware.AccountMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
@@ -147,14 +145,10 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Cors configurations
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",
-    env("FRONTEND_API"),
-    env("BACKEND_API")
-]
-
+CORS_ALLOWED_ORIGINS = [env("FRONTEND_URL")]
 CORS_ALLOW_CREDENTIALS = True
 
+# Auth config
 AUTH_USER_MODEL = "users.User"
 
 REST_FRAMEWORK = {
@@ -174,9 +168,31 @@ SIMPLE_JWT = {
      'AUTH_HEADER_TYPES': ('Bearer',),
 }
 
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
+]
 
-DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'SCOPE': ['profile', 'email'],
+        'AUTH_PARAMS': {'access_type': 'online'},
+    }
+}
 
 # URL used to access the media files
 MEDIA_URL = '/media/'
 
+# Cloudinary Config
+cloudinary.config(
+    cloud_name= env("CLOUD_NAME"),
+    api_key= env("API_KEY"),
+    api_secret= env("API_SECRET")
+)
+
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+
+# Google oauth config
+GOOGLE_CLIENT_ID = env("GOOGLE_CLIENT_ID")
+GOOGLE_CLIENT_SECRET = env("GOOGLE_CLIENT_SECRET")
+SITE_ID = 1
