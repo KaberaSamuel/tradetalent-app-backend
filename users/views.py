@@ -1,9 +1,13 @@
 from .serializers import AuthUserSerializer, HomeUserSerializer
 from users.models import User
 
-from django.contrib.auth import authenticate
 from rest_framework.permissions import  AllowAny
 from rest_framework_simplejwt.tokens import RefreshToken
+from django.contrib.auth import authenticate
+from django.conf import settings
+
+from google.auth.transport import requests
+from google.oauth2 import id_token
 
 from rest_framework.generics import RetrieveUpdateDestroyAPIView, GenericAPIView
 from rest_framework.views import APIView
@@ -23,6 +27,52 @@ class RegisterView(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class GoogleLoginView(APIView):
+    permission_classes = [AllowAny]
+    
+    def post(self, request):
+        google_token = request.data.get('token')
+        
+        try:
+            # Verify Google token
+            idinfo = id_token.verify_oauth2_token(
+                google_token, 
+                requests.Request(), 
+                settings.GOOGLE_CLIENT_ID
+            )
+            
+            # Extract user info
+            email = idinfo['email']
+            name = idinfo.get('name', '')
+            
+            # Get or create user
+            user, created = User.objects.get_or_create(
+                email=email,
+                defaults={'name': name}
+            )
+            
+            # Generate JWT tokens 
+            refresh = RefreshToken.for_user(user)
+            access_token = refresh.access_token
+            
+            # Return user data and tokens 
+            serializer = HomeUserSerializer(user)
+            return Response({
+                "user": serializer.data,
+                "tokens": {
+                    "access": str(access_token),
+                    "refresh": str(refresh)
+                },
+            }, status=status.HTTP_200_OK)
+            
+        except ValueError:
+            return Response(
+                {"error": "Invalid Google token"}, 
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
 
 
 class LoginView(APIView):

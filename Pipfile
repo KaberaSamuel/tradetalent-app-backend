@@ -18,6 +18,8 @@ requests = "*"
 pendulum = "*"
 django-autoslug = "*"
 django-filter = "*"
+django-allauth = "*"
+google-auth = "*"
 
 [dev-packages]
 
