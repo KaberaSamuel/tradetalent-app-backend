@@ -20,6 +20,7 @@ django-autoslug = "*"
 django-filter = "*"
 django-allauth = "*"
 google-auth = "*"
+cryptography = "*"
 
 [dev-packages]
 
