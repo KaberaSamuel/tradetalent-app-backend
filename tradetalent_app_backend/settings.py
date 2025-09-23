@@ -21,6 +21,10 @@ ALLOWED_HOSTS = [env("BACKEND_HOST")]
 # Cors configurations
 CORS_ALLOWED_ORIGINS = [env("FRONTEND_URL")]
 CORS_ALLOW_CREDENTIALS = True
+CSRF_TRUSTED_ORIGINS = [
+    env("FRONTEND_URL"),
+    f"https://{env('BACKEND_HOST')}",
+]
 
 INSTALLED_APPS = [
     "allauth",
