@@ -21,6 +21,8 @@ django-filter = "*"
 django-allauth = "*"
 google-auth = "*"
 cryptography = "*"
+pymysql = "*"
+mysqlclient = "*"
 
 [dev-packages]
 
