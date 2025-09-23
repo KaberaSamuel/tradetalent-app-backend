@@ -15,18 +15,14 @@ class BrowsingListings(ListCreateAPIView):
        'description',
        'skills'
    ]
-    
-    def get(self, request, *args, **kwargs):
-       queryset = self.filter_queryset(self.get_queryset())
-       serializer = self.get_serializer(queryset, many=True)
-       return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def get_queryset(self):
+        # Filter out user listings
+        queryset = Listing.objects.exclude(user=self.request.user)
+        return queryset.order_by("-created_at")
     
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
-
-    def get_queryset(self):
-            # Filter out user listings
-            return Listing.objects.exclude(user=self.request.user)
 
         
 class UserListings(ListAPIView):

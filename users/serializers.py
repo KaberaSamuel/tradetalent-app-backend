@@ -47,7 +47,7 @@ class HomeUserSerializer(serializers.ModelSerializer):
         return obj.name.split(" ")[0]
 
     def to_representation(self, instance):
-        """Custom method to format profile_image to return complete image url """
+        """Custom method to format profile_image to return complete image url"""
         data = super().to_representation(instance)
         if instance.profile_image:
             data['profile_image'] = str(instance.profile_image.url)

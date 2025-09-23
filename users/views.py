@@ -74,7 +74,6 @@ class GoogleLoginView(APIView):
             )
 
 
-
 class LoginView(APIView):
     permission_classes = [AllowAny]
 
@@ -151,6 +150,7 @@ class SearchView(GenericAPIView):
        'services_offered',
        'services_needed'
    ]
+    
     permission_classes = [AllowAny]
 
     def get(self, request, *args, **kwargs):
