@@ -49,10 +49,10 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    "corsheaders.middleware.CorsMiddleware",
-    "django.middleware.common.CommonMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
+    "django.middleware.common.CommonMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -132,10 +132,45 @@ USE_I18N = True
 USE_TZ = True
 
 
+# URL used to access the media files
+MEDIA_URL = "/media/"
+
+# Cloudinary Config
+cloudinary.config(
+    cloud_name=env("CLOUD_NAME"), api_key=env("API_KEY"), api_secret=env("API_SECRET")
+)
+
+DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
+
+
 # Static files (CSS, JavaScript, Images)
-STATIC_URL = "static/"
-STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+STATIC_URL = "/static/"
+
+if DEBUG:
+    STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+else:
+    STATIC_ROOT = "/opt/render/project/src/staticfiles"
+
+# Add this to help Django find static files
+STATICFILES_DIRS = []
+
+# Make sure Django can find its built-in static files
+STATICFILES_FINDERS = [
+    "django.contrib.staticfiles.finders.FileSystemFinder",
+    "django.contrib.staticfiles.finders.AppDirectoriesFinder",
+]
+
+STATICFILES_STORAGE = "whitenoise.storage.StaticFilesStorage"
+
+STORAGES = {
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.StaticFilesStorage",
+    },
+    "default": {
+        "BACKEND": DEFAULT_FILE_STORAGE,
+    },
+}
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
@@ -175,22 +210,3 @@ SOCIALACCOUNT_PROVIDERS = {
 GOOGLE_CLIENT_ID = env("GOOGLE_CLIENT_ID")
 GOOGLE_CLIENT_SECRET = env("GOOGLE_CLIENT_SECRET")
 SITE_ID = 1
-
-# URL used to access the media files
-MEDIA_URL = "/media/"
-
-# Cloudinary Config
-cloudinary.config(
-    cloud_name=env("CLOUD_NAME"), api_key=env("API_KEY"), api_secret=env("API_SECRET")
-)
-
-DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
-
-STORAGES = {
-    "staticfiles": {
-        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
-    },
-    "default": {
-        "BACKEND": DEFAULT_FILE_STORAGE,
-    },
-}

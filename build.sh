@@ -1,23 +1,19 @@
 #!/usr/bin/env bash
 set -o errexit
 
-# Install dependencies 
 pip install pipenv
 pipenv install --deploy --system
 
-# Apply database migrations
 python manage.py migrate
 
+mkdir -p /opt/render/project/src/staticfiles
 
-# Collect static files for production
-python manage.py collectstatic --noinput
+python manage.py collectstatic --noinput --verbosity=2  # Added verbosity for debugging
 
-# Create superuser when specified
+# Uncomment to see what was collected:
+echo "=== Static files collected ==="
+ls -la /opt/render/project/src/staticfiles/ || echo "Directory not found"
+
 if [ "$RUN_SUPERUSER_CREATION" = "True" ]; then
-    echo "Creating Django superuser using environment variables..."
-
     python manage.py createsuperuser --noinput || true
-    
-    echo "Superuser creation command executed."
 fi
-
