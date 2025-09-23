@@ -8,6 +8,10 @@ pipenv install --deploy --system
 # Apply database migrations
 python manage.py migrate
 
+
+# Collect static files for production
+python manage.py collectstatic --noinput
+
 # Create superuser when specified
 if [ "$RUN_SUPERUSER_CREATION" = "True" ]; then
     echo "Creating Django superuser using environment variables..."
