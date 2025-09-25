@@ -140,34 +140,25 @@ cloudinary.config(
     cloud_name=env("CLOUD_NAME"), api_key=env("API_KEY"), api_secret=env("API_SECRET")
 )
 
-DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
+# DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
 
 
 # Static files (CSS, JavaScript, Images)
 STATIC_URL = "/static/"
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
-if DEBUG:
-    STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
-else:
-    STATIC_ROOT = "/opt/render/project/src/staticfiles"
-
-# Add this to help Django find static files
-STATICFILES_DIRS = []
-
-# Make sure Django can find its built-in static files
 STATICFILES_FINDERS = [
     "django.contrib.staticfiles.finders.FileSystemFinder",
     "django.contrib.staticfiles.finders.AppDirectoriesFinder",
 ]
 
-STATICFILES_STORAGE = "whitenoise.storage.StaticFilesStorage"
-
 STORAGES = {
+    "default": {
+        "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
+    },
     "staticfiles": {
         "BACKEND": "whitenoise.storage.StaticFilesStorage",
-    },
-    "default": {
-        "BACKEND": DEFAULT_FILE_STORAGE,
     },
 }
 
