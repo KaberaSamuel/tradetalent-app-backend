@@ -32,8 +32,6 @@ INSTALLED_APPS = [
     "allauth.socialaccount",
     "allauth.socialaccount.providers.google",
     "django_filters",
-    "cloudinary_storage",
-    "cloudinary",
     "corsheaders",
     "users",
     "listings",
@@ -46,6 +44,8 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "cloudinary_storage",
+    "cloudinary",
 ]
 
 MIDDLEWARE = [
@@ -143,15 +143,14 @@ cloudinary.config(
 # DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
 
 
-# Static files (CSS, JavaScript, Images)
+# Static files config
 STATIC_URL = "/static/"
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
-STATICFILES_FINDERS = [
-    "django.contrib.staticfiles.finders.FileSystemFinder",
-    "django.contrib.staticfiles.finders.AppDirectoriesFinder",
-]
+# STATICFILES_FINDERS = [
+#     "django.contrib.staticfiles.finders.FileSystemFinder",
+#     "django.contrib.staticfiles.finders.AppDirectoriesFinder",
+# ]
 
 STORAGES = {
     "default": {
@@ -161,7 +160,6 @@ STORAGES = {
         "BACKEND": "whitenoise.storage.StaticFilesStorage",
     },
 }
-
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
