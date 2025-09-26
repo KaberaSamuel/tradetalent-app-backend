@@ -5,7 +5,6 @@ from datetime import timedelta
 import environ
 
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Env config
@@ -15,7 +14,6 @@ environ.Env.read_env(env_path)
 
 DEBUG = False if env("DEBUG") == "false" else True
 SECRET_KEY = env("DJANGO_SECRET")
-
 ALLOWED_HOSTS = [env("BACKEND_HOST")]
 
 # Cors configurations
@@ -27,25 +25,28 @@ CSRF_TRUSTED_ORIGINS = [
 ]
 
 INSTALLED_APPS = [
-    "allauth",
-    "allauth.account",
-    "allauth.socialaccount",
-    "allauth.socialaccount.providers.google",
-    "django_filters",
-    "corsheaders",
-    "users",
-    "listings",
-    "rest_framework_simplejwt.token_blacklist",
-    "rest_framework_simplejwt",
-    "rest_framework",
+    # Django built-in apps
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    # Third-party apps
+    "allauth",
+    "allauth.account",
+    "allauth.socialaccount",
+    "allauth.socialaccount.providers.google",
+    "rest_framework",
+    "rest_framework_simplejwt",
+    "rest_framework_simplejwt.token_blacklist",
+    "corsheaders",
+    "django_filters",
     "cloudinary_storage",
     "cloudinary",
+    # My apps
+    "users",
+    "listings",
 ]
 
 MIDDLEWARE = [
@@ -103,7 +104,6 @@ else:
 
 
 # Password validation
-# https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
 AUTH_PASSWORD_VALIDATORS = [
     {
         "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
@@ -121,18 +121,13 @@ AUTH_PASSWORD_VALIDATORS = [
 
 
 # Internationalization
-# https://docs.djangoproject.com/en/5.2/topics/i18n/
-
 LANGUAGE_CODE = "en-us"
-
 TIME_ZONE = "UTC"
-
 USE_I18N = True
-
 USE_TZ = True
 
 
-# URL used to access the media files
+# Media files
 MEDIA_URL = "/media/"
 
 # Cloudinary Config
@@ -140,17 +135,11 @@ cloudinary.config(
     cloud_name=env("CLOUD_NAME"), api_key=env("API_KEY"), api_secret=env("API_SECRET")
 )
 
-# DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
-
 
 # Static files config
 STATIC_URL = "/static/"
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
-# STATICFILES_FINDERS = [
-#     "django.contrib.staticfiles.finders.FileSystemFinder",
-#     "django.contrib.staticfiles.finders.AppDirectoriesFinder",
-# ]
 
 STORAGES = {
     "default": {
@@ -162,7 +151,6 @@ STORAGES = {
 }
 
 # Default primary key field type
-# https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # Auth config
