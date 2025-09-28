@@ -2,7 +2,10 @@ import os
 from django.conf import settings
 from django.contrib.auth import authenticate
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
+from django.core.mail import send_mail
+from django.utils.html import strip_tags
 
+from django.template.loader import render_to_string
 from google.auth.transport import requests
 from google.oauth2 import id_token
 
@@ -161,6 +164,7 @@ class SearchView(GenericAPIView):
 
 
 class RequestPasswordReset(GenericAPIView):
+    authentication_classes = []
     permission_classes = [AllowAny]
     serializer_class = ResetPasswordRequestSerializer
 
@@ -175,9 +179,21 @@ class RequestPasswordReset(GenericAPIView):
             reset = PasswordReset(email=email, token=token)
             reset.save()
 
-            reset_url = f"{os.environ['PASSWORD_RESET_BASE_URL']}/{token}"
+            reset_url = f"{os.environ['FRONTEND_URL']}/reset-password/{token}"
 
             # Sending reset link via email
+            html_content = render_to_string(
+                "request_password_reset.html", {"link": reset_url}
+            )
+            plain_message = strip_tags(html_content)
+            send_mail(
+                subject="Password Reset Notification",
+                message=plain_message,
+                from_email=settings.EMAIL_HOST_USER,
+                recipient_list=["kaberanshutisamuel@gmail.com"],
+                html_message=html_content,
+                fail_silently=False,
+            )
 
             return Response(
                 {"success": "We have sent you a link to reset your password"},
