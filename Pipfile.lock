@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "63387e45966a4f5288ac4281b292c4cb4b6999be12b5b12e4c2fe3d269e6c7f4"
+            "sha256": "f6da41d8ea33724c1dfd3174d21ff835e15274b1838d9254050a5529ee70ef4f"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -18,11 +18,11 @@
     "default": {
         "asgiref": {
             "hashes": [
-                "sha256:a5ab6582236218e5ef1648f242fd9f10626cfd4de8dc377db215d5d5098e3142",
-                "sha256:f3bba7092a48005b5f5bacd747d36ee4a5a61f4a269a6df590b43144355ebd2c"
+                "sha256:0b61526596219d70396548fc003635056856dba5d0d086f86476f10b33c75960",
+                "sha256:a0249afacb66688ef258ffe503528360443e2b9a8d8c4581b6ebefa58c841ef1"
             ],
             "markers": "python_version >= '3.9'",
-            "version": "==3.9.1"
+            "version": "==3.9.2"
         },
         "cachetools": {
             "hashes": [
@@ -286,12 +286,12 @@
         },
         "django": {
             "hashes": [
-                "sha256:60549579b1174a304b77e24a93d8d9fafe6b6c03ac16311f3e25918ea5a20058",
-                "sha256:da5e00372763193d73cecbf71084a3848458cecf4cee36b9a1e8d318d114a87b"
+                "sha256:59a13a6515f787dec9d97a0438cd2efac78c8aca1c80025244b0fe507fe0754b",
+                "sha256:e0f6f12e2551b1716a95a63a1366ca91bbcd7be059862c1b18f989b1da356cdd"
             ],
             "index": "pypi",
             "markers": "python_version >= '3.10'",
-            "version": "==5.2.6"
+            "version": "==5.2.7"
         },
         "django-allauth": {
             "hashes": [
@@ -300,6 +300,17 @@
             "index": "pypi",
             "markers": "python_version >= '3.8'",
             "version": "==65.11.2"
+        },
+        "django-anymail": {
+            "extras": [
+                "brevo"
+            ],
+            "hashes": [
+                "sha256:63e48402ec8258f17640eb73c8c64141f16d2f8ae7d448d0fb1c66e82b7cbcf6",
+                "sha256:b51783176f8a8382e958808151551558e4a46d1375fbc343742d1ebd06ce8e9e"
+            ],
+            "markers": "python_version >= '3.8'",
+            "version": "==13.1"
         },
         "django-autoslug": {
             "hashes": [

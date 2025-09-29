@@ -23,10 +23,11 @@ from .serializers import (
     ResetPasswordRequestSerializer,
     ResetPasswordSerializer,
 )
-        
+
 from users.models import User, PasswordReset
 
 logger = logging.getLogger(__name__)
+
 
 class RegisterView(APIView):
     authentication_classes = []
@@ -169,8 +170,11 @@ class RequestPasswordReset(GenericAPIView):
     permission_classes = [AllowAny]
 
     def post(self, request):
-        serializer = ResetPasswordRequestSerializer(request.data)
-        email = serializer.data['email']
+        serializer = ResetPasswordRequestSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        email = serializer.data["email"]
         user = User.objects.filter(email__iexact=email).first()
 
         if user:
@@ -187,14 +191,13 @@ class RequestPasswordReset(GenericAPIView):
             )
             plain_message = strip_tags(html_content)
             send_mail(
-                subject="Password Reset Notification",
+                subject="Reset Your Service Exchange App Password",
                 message=plain_message,
-                from_email=settings.EMAIL_HOST_USER,
-                recipient_list=["kaberanshutisamuel@gmail.com"],
+                from_email=f"Service Exchange App <{settings.DEFAULT_FROM_EMAIL}>",
+                recipient_list=[user.email],
                 html_message=html_content,
                 fail_silently=False,
             )
-                        
 
             return Response(
                 {"success": "We have sent you a link to reset your password"},
@@ -214,12 +217,12 @@ class ResetPassword(GenericAPIView):
     def post(self, request):
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
-        reset_obj = PasswordReset.objects.filter(token=request.data['token']).first()
+        reset_obj = PasswordReset.objects.filter(token=request.data["token"]).first()
 
         if not reset_obj:
             return Response({"error": "Invalid token"}, status=400)
 
-        user = User.objects.filter(email=reset_obj.email).first()       
+        user = User.objects.filter(email=reset_obj.email).first()
 
         if user:
             user.set_password(request.data["password"])

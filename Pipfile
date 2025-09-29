@@ -24,6 +24,7 @@ cryptography = "*"
 pymysql = "*"
 mysqlclient = "*"
 whitenoise = "*"
+django-anymail = {extras = ["brevo"], version = "*"}
 
 [dev-packages]
 
