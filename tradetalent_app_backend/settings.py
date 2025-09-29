@@ -118,6 +118,8 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# password reset token expires after 24 hours
+PASSWORD_RESET_TIMEOUT = 86400
 
 # Internationalization
 LANGUAGE_CODE = "en-us"

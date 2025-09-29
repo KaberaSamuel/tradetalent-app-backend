@@ -89,7 +89,7 @@ class LoginView(APIView):
         password = request.data.get("password")
 
         try:
-            user = User.objects.get(email=email)
+            user = User.objects.get(email__iexact=email)
         except User.DoesNotExist:
             return Response(
                 {"error": "Invalid Email"}, status=status.HTTP_400_BAD_REQUEST
@@ -169,7 +169,6 @@ class RequestPasswordReset(GenericAPIView):
     serializer_class = ResetPasswordRequestSerializer
 
     def post(self, request):
-        serializer = self.serializer_class(data=request.data)
         email = request.data["email"]
         user = User.objects.filter(email__iexact=email).first()
 
@@ -179,7 +178,7 @@ class RequestPasswordReset(GenericAPIView):
             reset = PasswordReset(email=email, token=token)
             reset.save()
 
-            reset_url = f"{os.environ['FRONTEND_URL']}/reset-password/{token}"
+            reset_url = f"{os.environ['FRONTEND_URL']}/public/reset-password/{token}"
 
             # Sending reset link via email
             html_content = render_to_string(
@@ -210,30 +209,20 @@ class ResetPassword(GenericAPIView):
     serializer_class = ResetPasswordSerializer
     permission_classes = []
 
-    def post(self, request, token):
+    def post(self, request):
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
-        data = serializer.validated_data
-
-        new_password = data["new_password"]
-        confirm_password = data["confirm_password"]
-
-        if new_password != confirm_password:
-            return Response({"error": "Passwords do not match"}, status=400)
-
-        reset_obj = PasswordReset.objects.filter(token=token).first()
+        reset_obj = PasswordReset.objects.filter(token=request.data['token']).first()
 
         if not reset_obj:
             return Response({"error": "Invalid token"}, status=400)
 
-        user = User.objects.filter(email=reset_obj.email).first()
+        user = User.objects.filter(email=reset_obj.email).first()       
 
         if user:
-            user.set_password(request.data["new_password"])
+            user.set_password(request.data["password"])
             user.save()
-
             reset_obj.delete()
-
             return Response({"success": "Password updated"})
         else:
             return Response({"error": "No user found"}, status=404)

@@ -86,9 +86,4 @@ class ResetPasswordRequestSerializer(serializers.Serializer):
 
 
 class ResetPasswordSerializer(serializers.Serializer):
-    new_password = serializers.RegexField(
-        regex=r"^\.{4,}$",
-        write_only=True,
-        error_messages={"invalid": ("Password must be at least 4 characters")},
-    )
-    confirm_password = serializers.CharField(write_only=True, required=True)
+    password = serializers.CharField(required=True)
