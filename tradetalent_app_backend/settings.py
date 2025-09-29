@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     "django_filters",
     "cloudinary_storage",
     "cloudinary",
+    "anymail",
     # My apps
     "users",
     "listings",
@@ -189,26 +190,24 @@ GOOGLE_CLIENT_ID = env("GOOGLE_CLIENT_ID")
 GOOGLE_CLIENT_SECRET = env("GOOGLE_CLIENT_SECRET")
 SITE_ID = 1
 
-# Email config
-EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-EMAIL_HOST = env("EMAIL_HOST")
-EMAIL_PORT = env("EMAIL_PORT")
-EMAIL_HOST_USER = env("EMAIL_HOST_USER")
-EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD")
-EMAIL_USE_TLS = True
-
+EMAIL_BACKEND = "anymail.backends.brevo.EmailBackend"
+ANYMAIL = {
+    "BREVO_API_KEY": env("BREVO_API_KEY"),
+    "IGNORE_RECIPIENT_STATUS": True,
+}
+DEFAULT_FROM_EMAIL = "kaberanshutis@gmail.com"
 
 # Terminal Loggin config
 LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'handlers': {
-        'console': {
-            'class': 'logging.StreamHandler',
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
         },
     },
-    'root': {
-        'handlers': ['console'],
-        'level': 'INFO', 
+    "root": {
+        "handlers": ["console"],
+        "level": "INFO",
     },
 }
