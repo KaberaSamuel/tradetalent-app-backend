@@ -1,4 +1,4 @@
-import os
+import os, logging
 from django.conf import settings
 from django.contrib.auth import authenticate
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
@@ -23,9 +23,10 @@ from .serializers import (
     ResetPasswordRequestSerializer,
     ResetPasswordSerializer,
 )
-
+        
 from users.models import User, PasswordReset
 
+logger = logging.getLogger(__name__)
 
 class RegisterView(APIView):
     authentication_classes = []
@@ -166,13 +167,11 @@ class SearchView(GenericAPIView):
 class RequestPasswordReset(GenericAPIView):
     authentication_classes = []
     permission_classes = [AllowAny]
-    serializer_class = ResetPasswordRequestSerializer
 
     def post(self, request):
-        email = request.data["email"]
-        print(email)
+        serializer = ResetPasswordRequestSerializer(request.data)
+        email = serializer.data['email']
         user = User.objects.filter(email__iexact=email).first()
-        print(user)
 
         if user:
             token_generator = PasswordResetTokenGenerator()
@@ -181,7 +180,6 @@ class RequestPasswordReset(GenericAPIView):
             reset.save()
 
             reset_url = f"{os.environ['FRONTEND_URL']}/public/reset-password/{token}"
-            print(reset_url)
 
             # Sending reset link via email
             html_content = render_to_string(
@@ -196,6 +194,7 @@ class RequestPasswordReset(GenericAPIView):
                 html_message=html_content,
                 fail_silently=False,
             )
+                        
 
             return Response(
                 {"success": "We have sent you a link to reset your password"},
