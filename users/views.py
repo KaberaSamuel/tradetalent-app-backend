@@ -170,7 +170,9 @@ class RequestPasswordReset(GenericAPIView):
 
     def post(self, request):
         email = request.data["email"]
+        print(email)
         user = User.objects.filter(email__iexact=email).first()
+        print(user)
 
         if user:
             token_generator = PasswordResetTokenGenerator()
@@ -179,6 +181,7 @@ class RequestPasswordReset(GenericAPIView):
             reset.save()
 
             reset_url = f"{os.environ['FRONTEND_URL']}/public/reset-password/{token}"
+            print(reset_url)
 
             # Sending reset link via email
             html_content = render_to_string(
