@@ -159,8 +159,9 @@ class UserDetailView(RetrieveUpdateDestroyAPIView):
         logged_in_user = self.request.user
 
         # delete related conversations involving the user
-        conversation = Conversation.objects.filter(name__icontains=logged_in_user.slug).delete()
-
+        conversations = Conversation.objects.filter(name__icontains=logged_in_user.slug)
+        conversations.delete()
+        
         # delete user
         instance.delete()
 
