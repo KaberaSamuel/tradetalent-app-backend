@@ -13,7 +13,7 @@ environ.Env.read_env(env_path)
 
 DEBUG = False if env("DEBUG") == "false" else True
 SECRET_KEY = env("DJANGO_SECRET")
-ALLOWED_HOSTS = [env("BACKEND_HOST")]
+ALLOWED_HOSTS = ["localhost", env("BACKEND_HOST")]
 
 # Cors configurations
 CORS_ALLOWED_ORIGINS = [env("FRONTEND_URL")]
@@ -31,6 +31,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "daphne",
     # Third-party apps
     "allauth",
     "allauth.account",
@@ -81,8 +82,10 @@ TEMPLATES = [
     },
 ]
 
-ASGI_APPLICATION = "chatapp.asgi.application"
+ASGI_APPLICATION = "tradetalent_app_backend.asgi.application"
 WSGI_APPLICATION = "tradetalent_app_backend.wsgi.application"
+
+CHANNEL_LAYERS = {"default": {"BACKEND": "channels.layers.InMemoryChannelLayer"}}
 
 # Databases Configurations
 if DEBUG:

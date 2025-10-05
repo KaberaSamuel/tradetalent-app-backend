@@ -27,6 +27,7 @@ whitenoise = "*"
 django-anymail = {extras = ["brevo"], version = "*"}
 channels = "*"
 psycopg2 = "*"
+daphne = "*"
 
 [dev-packages]
 
