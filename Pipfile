@@ -25,6 +25,8 @@ pymysql = "*"
 mysqlclient = "*"
 whitenoise = "*"
 django-anymail = {extras = ["brevo"], version = "*"}
+channels = "*"
+psycopg2 = "*"
 
 [dev-packages]
 

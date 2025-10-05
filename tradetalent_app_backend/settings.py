@@ -24,7 +24,7 @@ CSRF_TRUSTED_ORIGINS = [
 ]
 
 INSTALLED_APPS = [
-    # Django built-in apps
+    # Django core apps
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -44,9 +44,11 @@ INSTALLED_APPS = [
     "cloudinary_storage",
     "cloudinary",
     "anymail",
+    "channels",
     # My apps
     "users",
     "listings",
+    "chat",
 ]
 
 MIDDLEWARE = [
@@ -79,8 +81,8 @@ TEMPLATES = [
     },
 ]
 
+ASGI_APPLICATION = "chatapp.asgi.application"
 WSGI_APPLICATION = "tradetalent_app_backend.wsgi.application"
-
 
 # Databases Configurations
 if DEBUG:
