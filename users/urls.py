@@ -8,7 +8,8 @@ from users.views import (
     UserDetailView,
     SearchView,
     RequestPasswordReset,
-    ResetPassword
+    ResetPassword,
+    UsersViewSet
 )
 
 urlpatterns = [
@@ -19,6 +20,7 @@ urlpatterns = [
     path("request-password-reset/", RequestPasswordReset.as_view()),
     path("password-reset/", ResetPassword.as_view()),
     path("home/", HomeView.as_view()),
+    path("all/", UsersViewSet.as_view()),
     path("", SearchView.as_view()),
     path("<slug:slug>/", UserDetailView.as_view()),
 ]
