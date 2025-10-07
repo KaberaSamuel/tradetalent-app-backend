@@ -13,7 +13,7 @@ environ.Env.read_env(env_path)
 
 DEBUG = False if env("DEBUG") == "false" else True
 SECRET_KEY = env("DJANGO_SECRET")
-ALLOWED_HOSTS = [ env("BACKEND_HOST")]
+ALLOWED_HOSTS = [env("BACKEND_HOST")]
 
 # Cors configurations
 CORS_ALLOWED_ORIGINS = [env("FRONTEND_URL")]

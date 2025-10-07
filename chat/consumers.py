@@ -1,26 +1,12 @@
-from urllib.parse import parse_qs
 from asgiref.sync import async_to_sync
 from channels.generic.websocket import JsonWebsocketConsumer
 from .models import Conversation
-
-from rest_framework_simplejwt.authentication import JWTAuthentication
-from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
-from django.contrib.auth.models import AnonymousUser
 
 class ChatConsumer(JsonWebsocketConsumer):
     """
     This consumer is used to show user's online status,
     and send notifications.
     """
-
-    def authenticate_user_with_token(self, token):
-        try:
-            jwt_authentication = JWTAuthentication()
-            validated_token = jwt_authentication.get_validated_token(token)
-            user = jwt_authentication.get_user(validated_token)
-            return user
-        except (InvalidToken, TokenError):
-            return AnonymousUser()
 
     def __init__(self, *args, **kwargs):
         super().__init__(args, kwargs)
@@ -29,27 +15,14 @@ class ChatConsumer(JsonWebsocketConsumer):
         self.conversation = None
 
     def connect(self):
+        # User is already authenticated by the middleware
         self.user = self.scope["user"]
-
-        query_string = self.scope['query_string'].decode()
-        query_params = parse_qs(query_string)
-        token = query_params.get('token', [None])[0]
         
-        if token:
-            if token:
-                user = self.authenticate_user_with_token(token)
-                print(user)
-                self.scope['user'] = user
-                if user.is_authenticated:
-                    self.accept()
-                else:
-                    return
-        else:
-            return
-        
+        # Check if user is authenticated
         if not self.user.is_authenticated:
             return
-
+        
+        print(self.user)
         self.accept()
         self.conversation_name = f"{self.scope['url_route']['kwargs']['conversation_name']}"
         self.conversation, created = Conversation.objects.get_or_create(name=self.conversation_name)
