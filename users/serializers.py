@@ -44,17 +44,27 @@ class HomeUserSerializer(serializers.ModelSerializer):
         return Listing.objects.filter(user=obj).count()
 
     def get_name_initials(self, obj):
-        name_parts = obj.name.split(" ")
-        name_initials = ""
+        # Handle empty name
+        if not obj.name or not obj.name.strip():
+            return ""
+        
+        name_parts = [part for part in obj.name.split(" ") if part]  
+        
+        if not name_parts: 
+            return ""
         if len(name_parts) == 1:
             name_initials = name_parts[0][0]
         else:
             first_name, *middle_name, last_name = name_parts
             name_initials = f"{first_name[0]}{last_name[0]}"
+        
         return name_initials.upper()
 
     def get_first_name(self, obj):
-        return obj.name.split(" ")[0]
+        if not obj.name or not obj.name.strip():
+            return ""
+        name_parts = [part for part in obj.name.split(" ") if part]
+        return name_parts[0] if name_parts else ""
 
     def to_representation(self, instance):
         """Custom method to format profile_image to return complete image url"""
