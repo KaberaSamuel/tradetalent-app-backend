@@ -24,7 +24,8 @@ CSRF_TRUSTED_ORIGINS = [
 ]
 
 INSTALLED_APPS = [
-    # Django built-in apps
+    # Django core apps
+    "daphne",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -44,9 +45,11 @@ INSTALLED_APPS = [
     "cloudinary_storage",
     "cloudinary",
     "anymail",
+    "channels",
     # My apps
     "users",
     "listings",
+    "chat",
 ]
 
 MIDDLEWARE = [
@@ -79,8 +82,10 @@ TEMPLATES = [
     },
 ]
 
+ASGI_APPLICATION = "tradetalent_app_backend.asgi.application"
 WSGI_APPLICATION = "tradetalent_app_backend.wsgi.application"
 
+CHANNEL_LAYERS = {"default": {"BACKEND": "channels.layers.InMemoryChannelLayer"}}
 
 # Databases Configurations
 if DEBUG:
@@ -195,7 +200,7 @@ ANYMAIL = {
     "BREVO_API_KEY": env("BREVO_API_KEY"),
     "IGNORE_RECIPIENT_STATUS": True,
 }
-DEFAULT_FROM_EMAIL = env("EMAIL_FROM")
+DEFAULT_FROM_EMAIL = "kaberanshutis@gmail.com"
 
 # Terminal Loggin config
 LOGGING = {

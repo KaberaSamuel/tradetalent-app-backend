@@ -1,16 +1,17 @@
-"""
-ASGI config for tradetalent_app_backend project.
-
-It exposes the ASGI callable as a module-level variable named ``application``.
-
-For more information on this file, see
-https://docs.djangoproject.com/en/5.2/howto/deployment/asgi/
-"""
-
-import os
-
+import os, django
 from django.core.asgi import get_asgi_application
+from channels.routing import ProtocolTypeRouter, URLRouter
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'tradetalent_app_backend.settings')
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "tradetalent_app_backend.settings")
 
-application = get_asgi_application()
+# setup django before loading applications
+django.setup()
+from chat.middleware import JWTAuthMiddleware
+from chat import routing
+
+application = ProtocolTypeRouter(
+    {
+        "http": get_asgi_application(),
+        "websocket": JWTAuthMiddleware(URLRouter(routing.websocket_urlpatterns)),
+    }
+)
