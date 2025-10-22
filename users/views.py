@@ -1,6 +1,5 @@
 import os, logging
 from django.conf import settings
-from django.contrib.auth import authenticate
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.core.mail import send_mail
 from django.utils.html import strip_tags
@@ -25,6 +24,7 @@ from .serializers import (
 )
 
 from users.models import User, PasswordReset
+from chat.models import Conversation
 
 logger = logging.getLogger(__name__)
 
@@ -154,6 +154,15 @@ class UserDetailView(RetrieveUpdateDestroyAPIView):
     queryset = User.objects.all()
     serializer_class = HomeUserSerializer
     lookup_field = "slug"
+
+    def perform_destroy(self, instance):
+        logged_in_user = self.request.user
+
+        # delete related conversations involving the user
+        conversation = Conversation.objects.filter(name__icontains=logged_in_user.slug).delete()
+
+        # delete user
+        instance.delete()
 
 
 class SearchView(GenericAPIView):
