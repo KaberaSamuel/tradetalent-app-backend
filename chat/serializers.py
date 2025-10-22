@@ -48,12 +48,6 @@ class ConversationSerializer(serializers.ModelSerializer):
             return None
         message = messages[0]
 
-        message_content = message.content
-
-        # updating message to only show first 30 characters
-        if (len(message_content) > 30):
-            message.content = message.content[:30] + "..."
-
         return MessageSerializer(message).data
 
     def get_other_user(self, obj):

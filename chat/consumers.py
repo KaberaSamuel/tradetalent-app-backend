@@ -79,7 +79,6 @@ class ChatConsumer(JsonWebsocketConsumer):
                 self.conversation_name,
                 {
                     "type": "chat_message_echo",
-                    "name": self.user.slug,
                     "message": MessageSerializer(message).data,
                 },
             )
