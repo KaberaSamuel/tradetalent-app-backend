@@ -23,7 +23,7 @@ class Conversation(models.Model):
         self.save()
 
     def __str__(self):
-        return f"{self.name} ({self.get_online_count()})"
+        return f"{self.name}"
 
 
 class Message(models.Model):

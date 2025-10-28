@@ -1,6 +1,6 @@
 from rest_framework import generics
-from rest_framework.mixins import ListModelMixin, RetrieveModelMixin
-from rest_framework.viewsets import GenericViewSet
+from rest_framework.response import Response
+from rest_framework.generics import ListCreateAPIView
 
 from .models import Message, Conversation
 from .serializers import MessageSerializer, ConversationSerializer
@@ -12,10 +12,9 @@ class MessageList(generics.ListCreateAPIView):
     ordering = ("-timestamp",)
 
 
-class ConversationViewSet(ListModelMixin, RetrieveModelMixin, GenericViewSet):
+class ConversationListCreateView(ListCreateAPIView):
     serializer_class = ConversationSerializer
     queryset = Conversation.objects.none()
-    lookup_field = "name"
 
     def get_queryset(self):
         queryset = Conversation.objects.filter(name__contains=self.request.user.slug)
@@ -23,3 +22,15 @@ class ConversationViewSet(ListModelMixin, RetrieveModelMixin, GenericViewSet):
 
     def get_serializer_context(self):
         return {"request": self.request, "user": self.request.user}
+
+    def create(self, request, *args, **kwargs):
+        conversation_name = request.data.get("conversationName", "")
+
+        if conversation_name == "":
+            return Response({"message": "No conversation name provided"}, status=400)
+
+        # create conversation in the db if not exists
+        conversation,_ = Conversation.objects.get_or_create(name=conversation_name)
+        serializer_context = {"request": self.request, "user": self.request.user}
+        serializer = ConversationSerializer(conversation, context=serializer_context)
+        return Response({"conversation": serializer.data}, status=201)
