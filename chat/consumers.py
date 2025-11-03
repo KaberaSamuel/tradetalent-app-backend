@@ -33,7 +33,7 @@ class ChatConsumer(JsonWebsocketConsumer):
         return json.dumps(content, cls=UUIDEncoder)
 
     def connect(self):
-        # User is already authenticated by the middleware
+        # User already authenticated by the middleware
         self.user = self.scope["user"]
 
         # Check if user is authenticated
@@ -75,6 +75,7 @@ class ChatConsumer(JsonWebsocketConsumer):
                 conversation=self.conversation,
             )
 
+            # send message to frontend
             async_to_sync(self.channel_layer.group_send)(
                 self.conversation_name,
                 {
@@ -82,9 +83,41 @@ class ChatConsumer(JsonWebsocketConsumer):
                     "message": MessageSerializer(message).data,
                 },
             )
+
+            # send notification to the frontend
+            notification_group_name = self.get_receiver().slug + "__notifications"
+            async_to_sync(self.channel_layer.group_send)(
+                notification_group_name,
+                {
+                    "type": "new_message_notification",
+                    "name": self.user.username,
+                    "message": MessageSerializer(message).data,
+                },
+            )
+                
+        if message_type == "read_messages":
+            messages_to_me = self.conversation.messages.filter(to_user=self.user)
+            messages_to_me.update(read=True)
+
+            # Update the unread message count
+            unread_count = Message.objects.filter(to_user=self.user, read=False).count()
+            async_to_sync(self.channel_layer.group_send)(
+                self.user.slug + "__notifications",
+                {
+                    "type": "unread_count",
+                    "unread_count": unread_count,
+                },
+            )
+
         return super().receive_json(content, **kwargs)
 
     def chat_message_echo(self, event):
+        self.send_json(event)
+
+    def new_message_notification(self, event):
+        self.send_json(event)
+
+    def unread_count(self, event):
         self.send_json(event)
 
     def get_receiver(self):
@@ -92,3 +125,42 @@ class ChatConsumer(JsonWebsocketConsumer):
         for username in usernames:
             if username != self.user.slug:
                 return User.objects.get(slug=username)
+
+
+class ChatNotificationConsumer(JsonWebsocketConsumer):
+    def __init__(self, *args, **kwargs):
+        super().__init__(args, kwargs)
+        self.user = None
+
+    def connect(self):
+        self.user = self.scope["user"]
+        if not self.user.is_authenticated:
+            return
+
+        self.accept()
+
+        # send number of unread messages
+        unread_count = Message.objects.filter(to_user=self.user, read=False).count()
+        self.send_json(
+            {
+                "type": "unread_count",
+                "unread_count": unread_count,
+            }
+        )
+
+        # private notification group
+        self.notification_group_name = self.user.slug + "__notifications"
+        async_to_sync(self.channel_layer.group_add)(
+            self.notification_group_name,
+            self.channel_name,
+        )
+        
+    def disconnect(self, code):
+        async_to_sync(self.channel_layer.group_discard)(
+            self.notification_group_name,
+            self.channel_name,
+        )
+        return super().disconnect(code)
+    
+    def new_message_notification(self, event):
+        self.send_json(event)
