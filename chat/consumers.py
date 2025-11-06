@@ -44,22 +44,38 @@ class ChatConsumer(JsonWebsocketConsumer):
         self.conversation_name = (
             f"{self.scope['url_route']['kwargs']['conversation_name']}"
         )
-        self.conversation, created = Conversation.objects.get_or_create(
-            name=self.conversation_name
-        )
 
-        messages = self.conversation.messages.all().order_by("-timestamp")[0:50]
-        self.send_json(
-            {
-                "type": "last_50_messages",
-                "messages": MessageSerializer(messages, many=True).data,
-            }
-        )
+        
+        receiver = self.get_receiver()
+        # check if conversation wasn't deleted  
+        if receiver:
+            self.conversation, created = Conversation.objects.get_or_create(
+                name=self.conversation_name
+            )
 
-        async_to_sync(self.channel_layer.group_add)(
-            self.conversation_name,
-            self.channel_name,
-        )
+            messages = self.conversation.messages.all().order_by("-timestamp")[0:50]
+            self.send_json(
+                {
+                    "type": "last_50_messages",
+                    "messages": MessageSerializer(messages, many=True).data,
+                }
+            )
+
+            async_to_sync(self.channel_layer.group_add)(
+                self.conversation_name,
+                self.channel_name,
+            )
+        
+    
+        else:
+            self.conversation_name = None
+            self.send_json(
+                {
+                    "type": "conversation_deleted",
+                }
+            )
+            
+        
 
     def disconnect(self, code):
         print("Disconnected!")
@@ -67,6 +83,7 @@ class ChatConsumer(JsonWebsocketConsumer):
 
     def receive_json(self, content, **kwargs):
         message_type = content["type"]
+   
         if message_type == "chat_message":
             message = Message.objects.create(
                 from_user=self.user,
@@ -124,8 +141,8 @@ class ChatConsumer(JsonWebsocketConsumer):
         usernames = self.conversation_name.split("__")
         for username in usernames:
             if username != self.user.slug:
-                return User.objects.get(slug=username)
-
+                queryset = User.objects.filter(slug=username)
+                return queryset.first()
 
 class ChatNotificationConsumer(JsonWebsocketConsumer):
     def __init__(self, *args, **kwargs):
