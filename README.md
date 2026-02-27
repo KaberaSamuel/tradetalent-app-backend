@@ -1,4 +1,4 @@
-# ⚙️ Service Exchange App (The Backend Part)
+# ⚙️ Service Exchange App Backends
 
 This repository holds the code for the server-side part of the Service Exchange App.
 
@@ -6,7 +6,7 @@ This repository holds the code for the server-side part of the Service Exchange 
 
 ## 🛠️ Tech Stack: Python & Django
 
-| Category                | What I Used                        | Why I Used It (Simple Reason)                                                                    |
+| Category                | What I Used                        | Why I Used It                                                                                    |
 | :---------------------- | :--------------------------------- | :----------------------------------------------------------------------------------------------- |
 | **Main Framework**      | **Django**                         | A Python framework to handle the whole server.                                                   |
 | **APIs**                | **Django REST Framework (DRF)**    | Helps quickly build API endpoints that the frontend can talk to.                                 |
@@ -24,7 +24,5 @@ This repository holds the code for the server-side part of the Service Exchange 
 ## Quick Links
 
 The app is live here: https://tradetalent-app-frontend-bktj.vercel.app/
-
-Watch a demo video here: https://youtu.be/om9zlA_7fOo?si=A7nJSN6yFvmecvgg
 
 Find frontend code here: https://github.com/KaberaSamuel/tradetalent-app-frontend
