@@ -4,12 +4,13 @@ from django.http import HttpResponse
 from django.urls import path, include
 
 
-def health_check(request):
+def ping(request):
     return HttpResponse("ok", status=200)
 
 
 urlpatterns = [
-    path("health/", health_check),
+    path("ping/", ping),
+    path("health/", ping),  # legacy alias
     path("chats/", include("chat.urls")),
     path("users/token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
     path("users/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
