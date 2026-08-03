@@ -1,9 +1,15 @@
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from django.contrib import admin
+from django.http import HttpResponse
 from django.urls import path, include
 
 
+def health_check(request):
+    return HttpResponse("ok", status=200)
+
+
 urlpatterns = [
+    path("health/", health_check),
     path("chats/", include("chat.urls")),
     path("users/token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
     path("users/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),

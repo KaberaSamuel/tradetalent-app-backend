@@ -13,13 +13,16 @@ environ.Env.read_env(env_path)
 
 DEBUG = False if env("DEBUG") == "false" else True
 SECRET_KEY = env("DJANGO_SECRET")
-ALLOWED_HOSTS = [env("BACKEND_HOST")]
+ALLOWED_HOSTS = [env("BACKEND_HOST"), "localhost", "127.0.0.1"]
 
 # Cors configurations
-CORS_ALLOWED_ORIGINS = [env("FRONTEND_URL")]
+FRONTEND_URLS = [
+    origin.strip() for origin in env("FRONTEND_URL", default="").split(",") if origin.strip()
+]
+CORS_ALLOWED_ORIGINS = FRONTEND_URLS
 CORS_ALLOW_CREDENTIALS = True
 CSRF_TRUSTED_ORIGINS = [
-    env("FRONTEND_URL"),
+    *FRONTEND_URLS,
     f"https://{env('BACKEND_HOST')}",
 ]
 
